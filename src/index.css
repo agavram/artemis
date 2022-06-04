@@ -1,0 +1,98 @@
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/iosevka@4.5.4/index.min.css');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap'); */
+
+:root {
+  --font-color-light: #eee;
+  --bg-darker: #1a1f29;
+  --bg-main: #1f2430;
+  --accent: #ffcc66;
+  --bg-highlight: #27303F;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-darker);
+  font-size: 1.05rem;
+}
+
+code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.95em;
+}
+
+:root {
+  --comment: #6c7a8b;
+  --variable: #00d2e9;
+  --operator: #ffa856;
+  --tag: #4ad3ff;
+  --number: #dfbfff;
+  --code-white: #cccac1;
+}
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+}
+
+.hljs-built_in,
+.hljs-selector-tag,
+.hljs-section,
+.hljs-link {
+  color: var(--variable);
+}
+
+.hljs-keyword {
+  color: var(--operator);
+}
+
+.hljs,
+.hljs-subst {
+  color: var(--code-white);
+}
+
+.hljs-title,
+.hljs-attr,
+.hljs-meta-keyword {
+  font-style: italic;
+  color: var(--tag);
+}
+
+.hljs-string,
+.hljs-name,
+.hljs-type,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition,
+.hljs-variable,
+.hljs-template-tag,
+.hljs-template-variable {
+  color: var(--variable);
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-meta,
+.hljs-deletion {
+  color: var(--comment);
+}
+
+.hljs-literal,
+.hljs-number {
+  color: var(--number);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+
+.slide-fade-enter-active {
+  opacity: 0;
+}
