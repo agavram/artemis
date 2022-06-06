@@ -1,6 +1,5 @@
 import { For, splitProps } from 'solid-js';
 import styles from '../App.module.css';
-import { DocumentText, Folder } from '../assets/Icons';
 import { Notes } from '../helpers/Interfaces';
 import { DelayLink } from './DelayLink';
 

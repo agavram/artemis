@@ -16,7 +16,7 @@ export const MarkdownRender = (props: MarkdownRenderProps) => {
   return (
     <>
       <BreadCrumbs {...others} pathSplit={pathSplit}></BreadCrumbs>
-      <div innerHTML={source}></div>
+      <div style={{"line-break": "anywhere"}} innerHTML={source}></div>
     </>
   );
 };

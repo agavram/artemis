@@ -15,11 +15,11 @@ export const DelayLink = (props: DelayLinkProps) => {
 
   return (
     <Link
-      href={link}
+      href={encodeURI(link)}
       onClick={(e) => {
         setShouldNavigate(true);
         setTimeout(() => {
-          navigate(link, { scroll: true });
+          navigate(encodeURI(link), { scroll: true });
 
           if (link == loc.pathname) {
             setShouldNavigate(false);

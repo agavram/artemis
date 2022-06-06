@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import { For, splitProps } from 'solid-js';
 import styles from '../App.module.css';
-import { ArrowLeft, ChevronRight } from '../assets/Icons';
+import { Home, ChevronRight } from '../assets/Icons';
+import { FS_BASE } from '../helpers/Constants';
 import { interleave } from '../helpers/Functions';
 import { Notes } from '../helpers/Interfaces';
 import { DelayLink } from './DelayLink';
@@ -25,8 +26,8 @@ export const BreadCrumbs = (props: BreadCrumbsProps) => {
 
   return (
     <div class={styles.crumbIndicator}>
-      <DelayLink link="/" setShouldNavigate={setShouldNavigate}>
-        <ArrowLeft></ArrowLeft>
+      <DelayLink link={FS_BASE} setShouldNavigate={setShouldNavigate}>
+        <Home></Home>
       </DelayLink>
       <For each={pathSplit.slice(1)}>
         {(l, i) => {
@@ -51,7 +52,12 @@ export const BreadCrumbs = (props: BreadCrumbsProps) => {
                     {(k, j) => (
                       <li>
                         <DelayLink
-                          link={pathSplit.slice(0, i() + 1).join('/') + '/' + k}
+                          link={
+                            FS_BASE +
+                            pathSplit.slice(0, i() + 1).join('/') +
+                            '/' +
+                            k
+                          }
                           setShouldNavigate={setShouldNavigate}
                         >
                           {k}
@@ -60,7 +66,7 @@ export const BreadCrumbs = (props: BreadCrumbsProps) => {
                     )}
                   </For>
                 </div>
-                {l}
+                <span>{l}</span>
               </span>
               {i() != pathSplit.length - 1 ? (
                 <ChevronRight></ChevronRight>

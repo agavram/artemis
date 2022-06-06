@@ -1,6 +1,6 @@
 import { Motion, Presence } from '@motionone/solid';
 import _ from 'lodash';
-import { Route, Routes } from 'solid-app-router';
+import { Navigate, Route, Routes } from 'solid-app-router';
 import { Component, createSignal, JSX, onMount, Show } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import styles from './App.module.css';
@@ -8,7 +8,7 @@ import { BreadCrumbs } from './components/Breadcrumbs';
 import { DeepSearch } from './components/DeepSearch';
 import { FileViewer } from './components/FileViewer';
 import { MarkdownRender } from './components/MarkdownRender';
-import { ANIMATION_DEFAULTS } from './helpers/Constants';
+import { ANIMATION_DEFAULTS, FS_BASE } from './helpers/Constants';
 import { Notes } from './helpers/Interfaces';
 import notes from './notes/notes.json';
 
@@ -20,6 +20,9 @@ const App: Component = () => {
     let res: JSX.Element[] = [];
     res.push(
       <Route path="/deep-search" element={() => <DeepSearch></DeepSearch>} />
+    );
+    res.push(
+      <Route path={'/'} element={<Navigate href={FS_BASE}></Navigate>}></Route>
     );
     generateRoutesRecursively(root, '', res);
     return res;
@@ -44,7 +47,7 @@ const App: Component = () => {
 
       res.push(
         <Route
-          path={path}
+          path={`${FS_BASE}${path}`}
           element={() => {
             const [shouldNavigate, setShouldNavigate] = createSignal(false);
             const pathSplit = path.split('/');
@@ -76,7 +79,11 @@ const App: Component = () => {
                         }}
                       />
                       <FileViewer
-                        {...{ root: start, path, setShouldNavigate }}
+                        {...{
+                          root: start,
+                          path: `${FS_BASE}${path}`,
+                          setShouldNavigate,
+                        }}
                       ></FileViewer>
                     </Motion.div>
                   </Show>
@@ -90,7 +97,7 @@ const App: Component = () => {
         if (!v.isDirectory) {
           res.push(
             <Route
-              path={path + '/' + k}
+              path={`${FS_BASE}${path}/${k}`}
               element={() => {
                 const [shouldNavigate, setShouldNavigate] = createSignal(false);
                 return (
@@ -101,7 +108,7 @@ const App: Component = () => {
                           <MarkdownRender
                             source={v.content!}
                             notes={notes}
-                            path={path + '/' + k}
+                            path={`${path}/${k}`}
                             setShouldNavigate={setShouldNavigate}
                           ></MarkdownRender>
                         </Motion.div>

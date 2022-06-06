@@ -8,6 +8,7 @@
   background-color: var(--bg-main);
   box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
   border-radius: 8px;
+  min-height: 80vh;
   overflow: hidden;
 }
 
@@ -21,34 +22,35 @@ a:hover {
   text-decoration: underline;
 }
 
-.resultContainer {
+.resultsContainer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: stretch;
   gap: 24px;
   justify-content: space-between;
+  margin-top: 24px;
 }
 
-.resultContainer > div {
+.resultsContainer > div {
   width: 42%;
 }
 
-.resultContainer > div > a {
+.resultsContainer > div > a {
   text-decoration: none;
 }
 
 @media screen and (max-width: 992px) {
-  .resultContainer {
+  .resultsContainer {
     flex-direction: column;
   }
 
-  .resultContainer > div {
+  .resultsContainer > div {
     width: auto;
   }
 }
 
-.resultContainer > div {
+.resultsContainer > div {
   background-color: var(--bg-darker);
   padding: 1px 24px 20px 24px;
   border-radius: 8px;
@@ -72,6 +74,11 @@ h1:after {
   transition: 0.3s;
   opacity: 1;
   max-height: 20.5px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 75%;
 }
 
 .clear {
@@ -121,6 +128,16 @@ code:not(pre > code) {
   text-transform: uppercase;
   color: var(--comment);
   transition: 0.3s;
+}
+
+.crumbIndicator > span > span {
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  display: block;
+  pointer-events: none;
 }
 
 .crumbIndicator a {
@@ -203,4 +220,8 @@ span:focus + svg {
 .highlight {
   background-color: var(--number);
   color: var(--bg-darker);
+}
+
+.miniResult {
+  margin: 12px 0;
 }

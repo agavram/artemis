@@ -1,9 +1,13 @@
 import { Motion, Presence } from '@motionone/solid';
 import { clone, debounce, escape } from 'lodash';
-import { createSignal, For, onMount, Show, untrack } from 'solid-js';
+import { createSignal, For, onMount, Show } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import styles from '../App.module.css';
-import { ANIMATION_DEFAULTS, ANIMATION_DELAY } from '../helpers/Constants';
+import {
+  ANIMATION_DEFAULTS,
+  ANIMATION_DELAY,
+  FS_BASE,
+} from '../helpers/Constants';
 import { Notes } from '../helpers/Interfaces';
 import raw_notes from '../notes/raw_notes.json';
 import { DelayLink } from './DelayLink';
@@ -21,22 +25,21 @@ export const DeepSearch = () => {
 
   let input: HTMLInputElement;
   onMount(() => {
-    setTimeout(async () => {
+    setTimeout(() => {
       setField(input.value);
       setShouldShowResults(true);
-      setSearchResults(await recursiveHelper());
+      setSearchResults(recursiveHelper());
     }, 0);
   });
 
-  async function recursiveHelper() {
+  function recursiveHelper() {
     const f = field();
     let res: SearchResult[] = [];
-    if (f)
-      await recursiveContentSearch(raw_notes, escape(f.toLowerCase()), res);
+    if (f) recursiveContentSearch(raw_notes, escape(f.toLowerCase()), res);
     return res;
   }
 
-  async function recursiveContentSearch(
+  function recursiveContentSearch(
     root: Notes,
     search: string,
     res: SearchResult[],
@@ -56,6 +59,16 @@ export const DeepSearch = () => {
           if (c > 5) break;
           line = escape(line);
           let i = line.toLowerCase().indexOf(search);
+          if (i - 150 > 0) {
+            line = line.substring(i - 150);
+            line = '...' + line;
+            i = 153;
+          }
+          if (i + search.length + 150 < line.length) {
+            line = line.substring(0, i + search.length + 150);
+            line += '...';
+          }
+
           if (i != -1) {
             c++;
             while (i != -1) {
@@ -86,22 +99,19 @@ export const DeepSearch = () => {
     path.pop();
   }
 
-  const search = debounce(
-    async (e: InputEvent & { target: HTMLInputElement }) => {
-      setField(e.target.value);
-      if (searchResults.length) {
-        setShouldShowResults(false);
-        setTimeout(async () => {
-          setSearchResults(await recursiveHelper());
-          setShouldShowResults(true);
-        }, ANIMATION_DELAY);
-      } else {
-        setSearchResults(await recursiveHelper());
+  const search = debounce((e) => {
+    setField(e.target.value);
+    if (searchResults.length) {
+      setShouldShowResults(false);
+      setTimeout(() => {
+        setSearchResults(recursiveHelper());
         setShouldShowResults(true);
-      }
-    },
-    ANIMATION_DELAY
-  );
+      }, ANIMATION_DELAY);
+    } else {
+      setSearchResults(recursiveHelper());
+      setShouldShowResults(true);
+    }
+  }, ANIMATION_DELAY);
 
   return (
     <div>
@@ -115,8 +125,9 @@ export const DeepSearch = () => {
               placeholder="Search"
               value={field()}
               onInput={search}
+              maxLength={50}
             />
-            <div class={styles.resultContainer}>
+            <div class={styles.resultsContainer}>
               <For each={searchResults.slice(0, 10)}>
                 {(res, i) => {
                   const path = res.path.join('');
@@ -125,13 +136,13 @@ export const DeepSearch = () => {
                       <Show when={showResults()}>
                         <Motion {...ANIMATION_DEFAULTS}>
                           <DelayLink
-                            link={path}
+                            link={FS_BASE + path}
                             setShouldNavigate={setShouldNavigate}
                           >
                             <div class={styles.result}>
                               <h4>{path}</h4>
                               <For each={res.matches}>
-                                {(match, j) => <div innerHTML={match}></div>}
+                                {(match, j) => <div class={styles.miniResult} innerHTML={match}></div>}
                               </For>
                             </div>
                           </DelayLink>
