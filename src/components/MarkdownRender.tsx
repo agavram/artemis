@@ -1,3 +1,4 @@
+import { splitProps } from 'solid-js';
 import { Notes } from '../helpers/Interfaces';
 import { BreadCrumbs } from './Breadcrumbs';
 
@@ -8,21 +9,13 @@ interface MarkdownRenderProps {
   setShouldNavigate: (_: boolean) => void;
 }
 
-export const MarkdownRender = ({
-  notes,
-  source,
-  path,
-  setShouldNavigate,
-}: MarkdownRenderProps) => {
+export const MarkdownRender = (props: MarkdownRenderProps) => {
+  const [{ source, path }, others] = splitProps(props, ['source', 'path']);
   const pathSplit = path.split('/');
 
   return (
     <>
-      <BreadCrumbs
-        setShouldNavigate={setShouldNavigate}
-        notes={notes}
-        pathSplit={pathSplit}
-      ></BreadCrumbs>
+      <BreadCrumbs {...others} pathSplit={pathSplit}></BreadCrumbs>
       <div innerHTML={source}></div>
     </>
   );

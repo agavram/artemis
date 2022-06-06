@@ -1,14 +1,16 @@
+import { Motion, Presence } from '@motionone/solid';
 import _ from 'lodash';
-import { Route, Routes, useLocation } from 'solid-app-router';
-import { Component, createSignal, JSX, Show } from 'solid-js';
+import { Route, Routes } from 'solid-app-router';
+import { Component, createSignal, JSX, onMount, Show } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import styles from './App.module.css';
+import { BreadCrumbs } from './components/Breadcrumbs';
+import { DeepSearch } from './components/DeepSearch';
 import { FileViewer } from './components/FileViewer';
 import { MarkdownRender } from './components/MarkdownRender';
+import { ANIMATION_DEFAULTS } from './helpers/Constants';
 import { Notes } from './helpers/Interfaces';
 import notes from './notes/notes.json';
-import { Motion, Presence } from '@motionone/solid';
-import { BreadCrumbs } from './components/Breadcrumbs';
 
 const App: Component = () => {
   const [field, setField] = createSignal('');
@@ -16,6 +18,9 @@ const App: Component = () => {
 
   function generateRoutes(root: Notes) {
     let res: JSX.Element[] = [];
+    res.push(
+      <Route path="/deep-search" element={() => <DeepSearch></DeepSearch>} />
+    );
     generateRoutesRecursively(root, '', res);
     return res;
   }
@@ -44,35 +49,34 @@ const App: Component = () => {
             const [shouldNavigate, setShouldNavigate] = createSignal(false);
             const pathSplit = path.split('/');
 
+            let input: HTMLInputElement;
+            onMount(() => {
+              setTimeout(() => {
+                setField(input.value);
+                recursiveSearch();
+              }, 0);
+            });
+
             return (
               <div>
                 <Presence>
                   <Show when={!shouldNavigate()}>
-                    <Motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <h1>{useLocation().pathname}</h1>
+                    <Motion.div {...ANIMATION_DEFAULTS}>
                       <BreadCrumbs
-                        pathSplit={pathSplit}
-                        notes={notes}
-                        setShouldNavigate={setShouldNavigate}
+                        {...{ pathSplit, notes, setShouldNavigate }}
                       ></BreadCrumbs>
                       <input
                         type="text"
+                        ref={input!}
                         value={field()}
                         placeholder="Search"
                         onInput={(e) => {
-                          setField(e.target.value);
-                          recursiveSearch(notes, field().trim());
+                          setField(e.currentTarget.value);
+                          recursiveSearch();
                         }}
                       />
                       <FileViewer
-                        root={start}
-                        path={path}
-                        setShouldNavigate={setShouldNavigate}
+                        {...{ root: start, path, setShouldNavigate }}
                       ></FileViewer>
                     </Motion.div>
                   </Show>
@@ -93,12 +97,7 @@ const App: Component = () => {
                   <div>
                     <Presence>
                       <Show when={!shouldNavigate()}>
-                        <Motion.div
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.8 }}
-                          transition={{ duration: 0.3 }}
-                        >
+                        <Motion.div {...ANIMATION_DEFAULTS}>
                           <MarkdownRender
                             source={v.content!}
                             notes={notes}
@@ -120,7 +119,11 @@ const App: Component = () => {
     }
   }
 
-  function recursiveSearch(root: any, search: string, path: string[] = []) {
+  function recursiveSearch(
+    root: any = notes,
+    search: string = field().trim(),
+    path: string[] = []
+  ) {
     let hidden = true;
 
     path.push('sub');

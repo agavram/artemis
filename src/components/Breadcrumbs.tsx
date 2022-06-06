@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { For } from 'solid-js';
+import { For, splitProps } from 'solid-js';
 import styles from '../App.module.css';
-import { ArrowLeft, ChevronRight } from '../assets/icons';
+import { ArrowLeft, ChevronRight } from '../assets/Icons';
 import { interleave } from '../helpers/Functions';
 import { Notes } from '../helpers/Interfaces';
 import { DelayLink } from './DelayLink';
@@ -12,13 +12,15 @@ interface BreadCrumbsProps {
   setShouldNavigate: (_: boolean) => void;
 }
 
-export const BreadCrumbs = ({
-  pathSplit,
-  notes,
-  setShouldNavigate,
-}: BreadCrumbsProps) => {
+export const BreadCrumbs = (props: BreadCrumbsProps) => {
+  const [{ pathSplit, notes, setShouldNavigate }, others] = splitProps(props, [
+    'pathSplit',
+    'notes',
+    'setShouldNavigate',
+  ]);
+
   if (pathSplit.length <= 1) {
-    return <></>;
+    return <h1>NOTES</h1>;
   }
 
   return (

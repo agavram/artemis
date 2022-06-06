@@ -8,12 +8,51 @@
   background-color: var(--bg-main);
   box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
   border-radius: 8px;
+  overflow: hidden;
 }
 
 a {
-  text-decoration: underline;
   color: inherit;
   cursor: pointer;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.resultContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.resultContainer > div {
+  width: 42%;
+}
+
+.resultContainer > div > a {
+  text-decoration: none;
+}
+
+@media screen and (max-width: 992px) {
+  .resultContainer {
+    flex-direction: column;
+  }
+
+  .resultContainer > div {
+    width: auto;
+  }
+}
+
+.resultContainer > div {
+  background-color: var(--bg-darker);
+  padding: 1px 24px 20px 24px;
+  border-radius: 8px;
+  word-break: break-word;
 }
 
 h1:after {
@@ -159,4 +198,9 @@ span:focus + svg {
   height: 1.1em;
   margin: 0 8px;
   transition: 0.3s;
+}
+
+.highlight {
+  background-color: var(--number);
+  color: var(--bg-darker);
 }
