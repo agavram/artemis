@@ -17,9 +17,10 @@ export const DelayLink = (props: DelayLinkProps) => {
     <Link
       href={encodeURI(link)}
       onClick={(e) => {
+        if (e.metaKey || e.ctrlKey) return;
         setShouldNavigate(true);
         setTimeout(() => {
-          navigate(encodeURI(link), { scroll: true });
+          navigate(encodeURI(link));
 
           if (link == loc.pathname) {
             setShouldNavigate(false);
