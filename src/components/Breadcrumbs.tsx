@@ -1,7 +1,8 @@
-import _ from 'lodash';
-import { For, splitProps } from 'solid-js';
+import { computePosition, shift } from '@floating-ui/dom';
+import { get, truncate } from 'lodash';
+import { For, onMount, splitProps } from 'solid-js';
 import styles from '../App.module.css';
-import { Home, ChevronRight } from '../assets/Icons';
+import { ChevronRight, Home } from '../assets/Icons';
 import { FS_BASE } from '../helpers/Constants';
 import { interleave } from '../helpers/Functions';
 import { Notes } from '../helpers/Interfaces';
@@ -31,6 +32,20 @@ export const BreadCrumbs = (props: BreadCrumbsProps) => {
       </DelayLink>
       <For each={pathSplit.slice(1)}>
         {(l, i) => {
+          let anchor: HTMLSpanElement;
+          let popup: HTMLDivElement;
+
+          onMount(() => {
+            computePosition(anchor, popup, {
+              middleware: [shift({ padding: 12 })],
+            }).then(({ x, y }) => {
+              Object.assign(popup.style, {
+                left: `${x}px`,
+                top: `${y}px`,
+              });
+            });
+          });
+
           return (
             <>
               <span
@@ -39,14 +54,13 @@ export const BreadCrumbs = (props: BreadCrumbsProps) => {
                   e.preventDefault();
                 }}
                 onClick={(e) => e.target.focus()}
+                class={styles.crumbItem}
+                ref={anchor}
               >
-                <div class={styles.drop}>
+                <div class={styles.drop} ref={popup}>
                   <For
                     each={Object.keys(
-                      _.get(
-                        notes,
-                        interleave(pathSplit.slice(1, i() + 1), 'sub')
-                      )
+                      get(notes, interleave(pathSplit.slice(1, i() + 1), 'sub'))
                     )}
                   >
                     {(k, j) => (
@@ -60,19 +74,15 @@ export const BreadCrumbs = (props: BreadCrumbsProps) => {
                           }
                           setShouldNavigate={setShouldNavigate}
                         >
-                          {k}
+                          {truncate(k, { length: 24, separator: ' ' })}
                         </DelayLink>
                       </li>
                     )}
                   </For>
                 </div>
-                <span>{l}</span>
-              </span>
-              {i() != pathSplit.length - 1 ? (
+                {truncate(l, { length: 24, separator: ' ' })}
                 <ChevronRight></ChevronRight>
-              ) : (
-                <></>
-              )}
+              </span>
             </>
           );
         }}
