@@ -115,12 +115,11 @@ pre {
 }
 
 code:not(pre > code) {
-  color: var(--operator);
   background-color: var(--bg-darker);
 }
 
 .crumbIndicator {
-  display: inline-flex;
+  display: flex;
   padding: 6px 4px;
   border-radius: 6px;
   align-items: center;
@@ -128,6 +127,8 @@ code:not(pre > code) {
   text-transform: uppercase;
   color: var(--comment);
   transition: 0.3s;
+  flex-wrap: wrap;
+  padding-left: 12px;
 }
 
 .crumbIndicator > span > span {
@@ -135,6 +136,7 @@ code:not(pre > code) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  width: 100%;
   max-width: 200px;
   display: block;
   pointer-events: none;
@@ -150,8 +152,11 @@ code:not(pre > code) {
 }
 
 .crumbIndicator > span > div {
+  z-index: 9;
   position: absolute;
   top: 1.5em;
+  /* left: -12px; */
+  box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
   background-color: var(--bg-darker);
   white-space: nowrap;
   display: flex;
@@ -161,8 +166,17 @@ code:not(pre > code) {
   padding: 6px;
 }
 
+.crumbIndicator svg {
+  vertical-align: text-bottom;
+  pointer-events: none;
+}
+
 .crumbIndicator li {
   display: inline-block;
+}
+
+.crumbItem {
+  white-space: nowrap;
 }
 
 .crumbIndicator li:hover {
@@ -206,15 +220,19 @@ span:focus .drop li {
   padding: 2px 4px;
 }
 
-span:focus + svg {
+span:focus > svg {
   transform: rotate(90deg);
 }
 
 .crumbIndicator svg {
   stroke: var(--comment);
   height: 1.1em;
-  margin: 0 8px;
   transition: 0.3s;
+  margin-right: 8px;
+}
+
+.crumbIndicator svg:not(:first-child) {
+  margin: 0 8px;
 }
 
 .highlight {

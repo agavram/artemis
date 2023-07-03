@@ -1,5 +1,5 @@
 import { Motion, Presence } from '@motionone/solid';
-import _ from 'lodash';
+import { get } from 'lodash';
 import { Navigate, Route, Routes } from 'solid-app-router';
 import { Component, createSignal, JSX, onMount, Show } from 'solid-js';
 import { createStore } from 'solid-js/store';
@@ -40,7 +40,7 @@ const App: Component = () => {
         .flatMap((v) => (v === '' ? 'sub' : ['sub', v]));
       let start: Notes;
       if (p.length > 1) {
-        start = _.get(dirs, p);
+        start = get(dirs, p);
       } else {
         start = dirs;
       }

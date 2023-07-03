@@ -8,75 +8,80 @@ import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
 const tm = require('markdown-it-texmath');
 import pluginRewriteAll from 'vite-plugin-rewrite-all';
+import * as shiki from 'shiki';
 
 export default defineConfig({
   plugins: [
     solidPlugin(),
     pluginRewriteAll(),
-    // function () {
-    //   let md = new MarkdownIt({
-    //     breaks: true,
-    //     highlight: function (str, lang) {
-    //       if (lang && hljs.getLanguage(lang)) {
-    //         try {
-    //           return hljs.highlight(str, { language: lang }).value;
-    //         } catch (__) {}
-    //       }
+    async function () {
+      const highlighter = await shiki.getHighlighter({
+        theme: 'poimandres',
+      });
 
-    //       return '';
-    //     },
-    //   }).use(tm, {
-    //     engine: require('katex'),
-    //     delimiters: 'dollars',
-    //   });
+      let md = new MarkdownIt({
+        breaks: true,
+        highlight: function (str, lang) {
+          if (lang && hljs.getLanguage(lang)) {
+            try {
+              return highlighter.codeToHtml(str, { lang });
+            } catch (__) {}
+          }
 
-    //   const IN = '/Users/adrianavram/Documents/Nota/';
+          return '';
+        },
+      }).use(tm, {
+        engine: require('katex'),
+        delimiters: 'dollars',
+      });
 
-    //   const BASE: any = {
-    //     hidden: false,
-    //     isDirectory: true,
-    //     sub: {},
-    //   };
+      const IN = '/Users/adrianavram/Documents/Nota/';
 
-    //   const renderedFs = _.cloneDeep(BASE);
-    //   const rawFs = _.cloneDeep(BASE);
+      const BASE: any = {
+        hidden: false,
+        isDirectory: true,
+        sub: {},
+      };
 
-    //   glob(IN + '**/*.md', function (er, files) {
-    //     for (const file of files) {
-    //       let loc = file.slice(IN.length);
-    //       loc = loc.substring(0, loc.lastIndexOf('.'));
+      const renderedFs = _.cloneDeep(BASE);
+      const rawFs = _.cloneDeep(BASE);
 
-    //       const locs = loc.split(path.sep);
-    //       let renderedHead = renderedFs;
-    //       let rawHead = rawFs;
+      glob(IN + '**/*.md', function (er, files) {
+        for (const file of files) {
+          let loc = file.slice(IN.length);
+          loc = loc.substring(0, loc.lastIndexOf('.'));
 
-    //       for (let i = 0; i < locs.length; i++) {
-    //         const l = locs[i];
-    //         if (i == locs.length - 1) {
-    //           renderedHead['sub'][l] = _.cloneDeep(BASE);
-    //           renderedHead['sub'][l]['isDirectory'] = false;
-    //           renderedHead['sub'][l]['content'] = md.render(
-    //             fs.readFileSync(file, 'utf-8')
-    //           );
+          const locs = loc.split(path.sep);
+          let renderedHead = renderedFs;
+          let rawHead = rawFs;
 
-    //           rawHead['sub'][l] = _.cloneDeep(BASE);
-    //           rawHead['sub'][l]['isDirectory'] = false;
-    //           rawHead['sub'][l]['content'] = fs
-    //             .readFileSync(file, 'utf-8')
-    //             .toString();
-    //         }
-    //         if (!(l in renderedHead.sub)) {
-    //           renderedHead['sub'][l] = _.cloneDeep(BASE);
-    //           rawHead['sub'][l] = _.cloneDeep(BASE);
-    //         }
-    //         renderedHead = renderedHead['sub'][l];
-    //         rawHead = rawHead['sub'][l];
-    //       }
-    //     }
-    //     fs.writeFileSync('./src/notes/notes.json', JSON.stringify(renderedFs));
-    //     fs.writeFileSync('./src/notes/raw_notes.json', JSON.stringify(rawFs));
-    //   });
-    // },
+          for (let i = 0; i < locs.length; i++) {
+            const l = locs[i];
+            if (i == locs.length - 1) {
+              renderedHead['sub'][l] = _.cloneDeep(BASE);
+              renderedHead['sub'][l]['isDirectory'] = false;
+              renderedHead['sub'][l]['content'] = md.render(
+                fs.readFileSync(file, 'utf-8')
+              );
+
+              rawHead['sub'][l] = _.cloneDeep(BASE);
+              rawHead['sub'][l]['isDirectory'] = false;
+              rawHead['sub'][l]['content'] = fs
+                .readFileSync(file, 'utf-8')
+                .toString();
+            }
+            if (!(l in renderedHead.sub)) {
+              renderedHead['sub'][l] = _.cloneDeep(BASE);
+              rawHead['sub'][l] = _.cloneDeep(BASE);
+            }
+            renderedHead = renderedHead['sub'][l];
+            rawHead = rawHead['sub'][l];
+          }
+        }
+        fs.writeFileSync('./src/notes/notes.json', JSON.stringify(renderedFs));
+        fs.writeFileSync('./src/notes/raw_notes.json', JSON.stringify(rawFs));
+      });
+    },
   ],
   build: {
     target: 'esnext',
